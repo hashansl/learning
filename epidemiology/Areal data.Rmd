@@ -1,0 +1,17 @@
+---
+title: "Areal data"
+author: "Hashan Fernando"
+date: "2024-02-13"
+output: html_document
+---
+
+#### Geospatial Health Data: Modeling and Visualization with R-INLA and Shiny
+
+https://www.paulamoraga.com/book-geospatial/sec-arealdatatheory.html#:~:text=A%20popular%20spatial%20model%20is,areas%20that%20are%20farther%20away.
+
+##### Areal data
+
+A simple measure of disease risk in areas is the standardized incidence ratio (SIR) which is defined as the ratio of the observed to the expected counts.
+
+A popular spatial model is the Besag-York-Mollié (BYM) model (Besag, York, and Mollié 1991) which takes into account that data may be spatially correlated and observations in neighboring areas may be more similar than observations in areas that are farther away. 
+
