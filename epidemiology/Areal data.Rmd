@@ -15,3 +15,104 @@ A simple measure of disease risk in areas is the standardized incidence ratio (S
 
 A popular spatial model is the Besag-York-Mollié (BYM) model (Besag, York, and Mollié 1991) which takes into account that data may be spatially correlated and observations in neighboring areas may be more similar than observations in areas that are farther away. 
 
+This model includes a spatial random effect that smoothes the data according to a neighborhood structure, and an unstructured exchangeable component that models uncorrelated noise .
+
+```{r}
+library(SpatialEpi)
+library(ggplot2)
+```
+
+```{r}
+map <- pennLC$spatial.polygon
+plot(map)
+```
+
+```{r}
+class(map)
+```
+We can obtain the neighbors of each county of the map by using the poly2nb() function of the spdep package (Bivand 2020). This function returns a neighbors list nb based on counties with contiguous boundaries
+
+```{r}
+library(spdep)
+
+nb <- poly2nb(map)
+head(nb)
+```
+```{r}
+d <- data.frame(county = names(map), neigh = rep(0, length(map)))
+rownames(d) <- names(map)
+map <- SpatialPolygonsDataFrame(map, d, match.ID = TRUE)
+map$neigh[nb[[2]]] <- 1
+map$neigh[nb[[44]]] <- 1
+map$neigh[nb[[58]]] <- 1
+
+coord <- coordinates(map)
+map$long <- coord[, 1]
+map$lat <- coord[, 2]
+map$ID <- 1:dim(map@data)[1]
+```
+
+```{r}
+library(sf)
+mapsf <- st_as_sf(map)
+```
+
+```{r}
+ggplot(mapsf) + geom_sf(aes(fill = as.factor(neigh))) +
+  geom_text(aes(long, lat, label = ID), color = "white") +
+  theme_bw() + guides(fill = FALSE)
+```
+#####  Standardized incidence ratio
+
+One simple measure of disease risk is the standardized incidence ratio (SIR). The SIR is defined as the ratio of observed counts to the expected counts.
+
+```{r}
+library(dplyr)
+d <- group_by(pennLC$data, county) %>% summarize(Y = sum(cases))
+head(d)
+```
+
+```{r}
+d <- aggregate(
+  x = pennLC$data$cases,
+  by = list(county = pennLC$data$county),
+  FUN = sum
+)
+names(d) <- c("county", "Y")
+```
+
+
+```{r}
+pennLC$data <- pennLC$data[order(
+  pennLC$data$county,
+  pennLC$data$race,
+  pennLC$data$gender,
+  pennLC$data$age
+), ]
+
+
+E <- expected(
+  population = pennLC$data$population,
+  cases = pennLC$data$cases, n.strata = 16
+)
+
+d$E <- E[match(d$county, unique(pennLC$data$county))]
+head(d)
+```
+```{r}
+d$SIR <- d$Y / d$E
+head(d)
+```
+
+```{r}
+map <- merge(map, d)
+
+mapsf <- st_as_sf(map)
+
+ggplot(mapsf) + geom_sf(aes(fill = SIR)) +
+  scale_fill_gradient2(
+    midpoint = 1, low = "blue", mid = "white", high = "red"
+  ) +
+  theme_bw()
+```
+
