@@ -1,0 +1,175 @@
+---
+title: "Bayesian spatial models-patial modeling of housing prices"
+author: "Hashan Fernando"
+date: "2024-02-13"
+output: html_document
+---
+
+
+#### Developing a Cancer Atlas using Bayesian Methods: A Practical Guide for Application and Interpretation
+
+https://www.paulamoraga.com/book-spatial/bayesian-spatial-models.html#:~:text=Bayesian%20hierarchical%20models%20(Banerjee%2C%20Carlin,partition%20of%20the%20study%20region.
+
+##### Bayesian spatial models -patial modeling of housing prices
+
+```{r}
+#install.packages("INLA",
+#repos = "https://inla.r-inla-download.org/R/stable", dep = TRUE)
+```
+```{r}
+library(INLA)
+```
+
+```{r}
+library(sf)
+library(spData)
+```
+
+```{r}
+map <- st_read(system.file("shapes/boston_tracts.shp",
+               package = "spData"), quiet = TRUE)
+```
+
+```{r}
+library(mapview)
+map$vble <- log(map$MEDV)
+mapview(map, zcol = "vble")
+```
+
+
+
+```{r}
+library(GGally)
+ggpairs(data = map, columns = c("vble", "CRIM", "RM"))
+```
+
+```{r}
+library(spdep)
+library(INLA)
+nb <- poly2nb(map)
+head(nb)
+```
+
+```{r}
+nb2INLA("map.adj", nb)
+g <- inla.read.graph(filename = "map.adj")
+```
+
+```{r}
+map$re_u <- 1:nrow(map) #number of rows
+map$re_v <- 1:nrow(map)
+```
+
+```{r}
+formula <- vble ~ CRIM + RM +
+  f(re_u, model = "besag", graph = g, scale.model = TRUE) +
+  f(re_v, model = "iid")
+```
+
+```{r}
+formula <- vble ~ CRIM + RM + f(re_u, model = "bym2", graph = g)
+```
+
+
+```{r}
+res <- inla(formula, family = "gaussian", data = map,
+control.predictor = list(compute = TRUE),
+control.compute = list(return.marginals.predictor = TRUE))
+```
+```{r}
+res$summary.fixed
+```
+
+```{r}
+summary(res$summary.fitted.values)
+```
+
+
+```{r}
+# Posterior mean and 95% CI
+map$PM <- res$summary.fitted.values[, "mean"]
+map$LL <- res$summary.fitted.values[, "0.025quant"]
+map$UL <- res$summary.fitted.values[, "0.975quant"]
+```
+
+
+```{r}
+# common legend
+at <- seq(min(c(map$PM, map$LL, map$UL)),
+          max(c(map$PM, map$LL, map$UL)),
+          length.out = 8)
+
+# popup table
+popuptable <- leafpop::popupTable(dplyr::mutate_if(map,
+                                  is.numeric, round, digits = 2),
+zcol = c("TOWN", "vble", "CRIM", "RM", "PM", "LL", "UL"),
+row.numbers = FALSE, feature.id = FALSE)
+
+m1 <- mapview(map, zcol = "PM", map.types = "CartoDB.Positron",
+              at = at, popup = popuptable)
+m2 <- mapview(map, zcol = "LL", map.types = "CartoDB.Positron",
+              at = at, popup = popuptable)
+m3 <- mapview(map, zcol = "UL", map.types = "CartoDB.Positron",
+              at = at, popup = popuptable)
+```
+
+
+```{r}
+library(leafsync)
+m <- leafsync::sync(m1, m2, m3, ncol = 3)
+m
+```
+
+
+```{r}
+# Transformation of the marginal of
+# the first area with inla.tmarginal()
+# inla.tmarginal(function(x) exp(x),
+#                res$marginals.fitted.values[[1]])
+
+# Transformation marginals with inla.tmarginal()
+marginals <- lapply(res$marginals.fitted.values,
+FUN = function(marg){inla.tmarginal(function(x) exp(x), marg)})
+
+# Obtain summaries of the marginals with inla.zmarginal()
+marginals_summaries <- lapply(marginals,
+FUN = function(marg){inla.zmarginal(marg)})
+
+# Posterior mean and 95% CI
+map$PMoriginal <- sapply(marginals_summaries, '[[', "mean") 
+map$LLoriginal <- sapply(marginals_summaries, '[[', "quant0.025")
+map$ULoriginal <- sapply(marginals_summaries, '[[', "quant0.975")
+```
+
+
+```{r}
+# common legend
+at <- seq(min(c(map$PMoriginal, map$LLoriginal, map$ULoriginal)),
+          max(c(map$PMoriginal, map$LLoriginal, map$ULoriginal)),
+          length.out = 8)
+
+# popup table
+popuptable <- leafpop::popupTable(dplyr::mutate_if(map,
+                                  is.numeric, round, digits = 2),
+zcol = c("TOWN", "vble", "CRIM", "RM", "PM", "LL", "UL"),
+row.numbers = FALSE, feature.id = FALSE)
+
+m1 <- mapview(map, zcol = "PMoriginal",
+              map.types = "CartoDB.Positron",
+              at = at, popup = popuptable)
+m2 <- mapview(map, zcol = "LLoriginal",
+              map.types = "CartoDB.Positron",
+              at = at, popup = popuptable)
+m3 <- mapview(map, zcol = "ULoriginal",
+              map.types = "CartoDB.Positron",
+              at = at, popup = popuptable)
+```
+
+
+```{r}
+m <- leafsync::sync(m1, m2, m3, ncol = 3)
+m
+```
+
+
+
