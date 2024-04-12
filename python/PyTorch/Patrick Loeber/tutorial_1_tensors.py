@@ -1,8 +1,9 @@
 import torch
 
 #empty tensor
-#x = torch.empty(2,3)
-#print(x)
+x = torch.empty(2,2,3)
+print(x)
+
 
 #zeroes ones can be created
 
