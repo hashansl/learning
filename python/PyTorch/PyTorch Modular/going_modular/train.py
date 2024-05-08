@@ -19,8 +19,8 @@ LEARNING_RATE = 0.001
 
 #going modular/data/pizza_steak_sushi/train
 # Setup directories
-train_dir = "/Users/h6x/ORNL/git/persistence-image-classification/going modular/data/pizza_steak_sushi/train"
-test_dir = "/Users/h6x/ORNL/git/persistence-image-classification/going modular/data/pizza_steak_sushi/test"
+train_dir = "/Users/h6x/ORNL/git/learning/python/PyTorch/PyTorch Modular/data/pizza_steak_sushi/train"
+test_dir = "/Users/h6x/ORNL/git/learning/python/PyTorch/PyTorch Modular/data/pizza_steak_sushi/test"
 
 # Setup target device
 device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -71,5 +71,5 @@ loss_and_accuracy_curve_plotter.plot_loss_curves(results)
 
 # Save the model with help from utils.py
 utils.save_model(model=model,
-                 target_dir="/Users/h6x/ORNL/git/persistence-image-classification/models",
+                 target_dir="/Users/h6x/ORNL/git/learning/python/PyTorch/PyTorch Modular/models",
                  model_name="05_going_modular_script_mode_tinyvgg_model.pth")
