@@ -1,0 +1,32 @@
+Project 2 Topics
+
+1. Develop a small LLM from scratch and train it to answer plot-related questions (see Project 1) about the novels by your author.
+2. Implement a LangChain-based reasoning system that can interpret your author's novels and the plots.
+3. Use out of the box and then fine-tune BERT to answer precise questions (from Project 1 plot analysis) about your author's novels.
+4. Compare performance of different versions of BERT on the plot analysis tasks.
+5. Implement an authorship attribution using BERT as the fine-tuned classifier. 
+6. Implement a complete chatbot for your novels using Hugging Face API/librarie
+
+
+Here's a breakdown of each option based on learning potential:
+
+1. **Developing a Small LLM from Scratch:** This is a highly valuable option if you want a deep understanding of the foundations of language models. You'll learn about data preprocessing, tokenization, model architectures, training processes, and fine-tuning. While it’s time-intensive, it's very educational if you're interested in building NLP models from the ground up.
+
+2. **Implementing a LangChain-based Reasoning System:** LangChain is an excellent choice if you want to learn about chaining together different components like LLMs, retrievers, and memory, for reasoning over text. This will expose you to advanced prompt engineering, chaining techniques, and deploying models for interactive applications. It's less about model architecture and more about orchestration.
+
+3. **Using and Fine-Tuning BERT for Question Answering:** This approach offers a balanced learning experience. You’ll work with a strong, pretrained model (BERT), gaining hands-on experience with fine-tuning and customizing models for specific tasks. Fine-tuning BERT on plot-based questions would teach you about adapting models to specific contexts without the overhead of training from scratch.
+
+4. **Comparing BERT Versions for Plot Analysis Tasks:** This option is more analytical. You’d explore how different versions of BERT (e.g., base, large, fine-tuned, etc.) perform on the same task, learning about model variations, efficiency, and performance analysis. This comparison would be interesting but involves less development.
+
+5. **Authorship Attribution Using BERT:** This task is focused on adapting BERT as a classifier for a text classification task, which could be insightful for learning about BERT’s versatility. You’d learn how BERT can be trained to detect stylistic features and classify based on author-specific nuances.
+
+6. **Building a Chatbot Using Hugging Face APIs/Libraries:** This option combines the convenience of pre-built models with interactive deployment. It’s ideal for practical learning on deploying and customizing chatbots. You’ll learn about model hosting, conversation flow, and using the Hugging Face ecosystem, which is highly applicable in real-world NLP projects.
+
+### Recommended Options
+For a balanced, in-depth learning experience:
+- **Option 3** (Fine-tuning BERT) and **Option 6** (Chatbot) are great choices.
+  - **Option 3** will help you understand model fine-tuning and adaptation for question-answering tasks.
+  - **Option 6** lets you create an interactive tool that brings your analysis to life and could be extended for future projects. 
+
+
+My choice: 3. Use out of the box and then fine-tune BERT to answer precise questions (from Project 1 plot analysis) about your author's novels.
