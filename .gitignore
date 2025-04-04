@@ -2,6 +2,7 @@
 .Rhistory
 .RData
 .Ruserdata
+.DS_Store
 
 /python/PyTorch/Patrick Loeber/data/
 /python/PyTorch/Patrick Loeber/runs/
