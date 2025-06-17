@@ -22,3 +22,12 @@
 /python/PyTorch/custom modeling/dataset/
 
 spatial test/data/
+
+
+# Ignore Jupyter Notebook checkpoints
+.ipynb_checkpoints
+# Ignore Python cache files
+__pycache__/
+
+
+
